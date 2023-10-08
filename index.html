@@ -2,52 +2,14 @@
 <title>OAuth Authorization Code in Vanilla JS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-<script>
-// Configure your application and authorization server details
-var config = {
-    client_id: "",
-    redirect_uri: "", // front end (current page)
-    authorization_endpoint: "", // authorization server (oauth provider)
-    token_endpoint: "", // back end
-    requested_scopes: ""
-};
-</script>
-
 <div class="flex-center full-height">
     <div class="content">
-        <a href="#" id="start">Click to Sign In</a>
-        <div id="token" class="hidden">
-            <h2>Access Token</h2>
-            <div id="access_token" class="code"></div>
-        </div>
-        <div id="error" class="hidden">
-            <h2>Error</h2>
-            <div id="error_details" class="code"></div>
-        </div>
+        <a id="start" href="${AUTHORIZATION_ENDPOINT}?scope=${SCOPES}&response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}">Click to Sign In</a>
+        <div id="result"></div>
     </div>
 </div>
 
 <script>
-
-//////////////////////////////////////////////////////////////////////
-// OAUTH REQUEST
-
-// Initiate the Auth Code flow when the link is clicked
-document.getElementById("start").addEventListener("click", async function(e){
-    e.preventDefault();
-
-    // Build the authorization URL
-    var url = config.authorization_endpoint
-        + "?response_type=code"
-        + "&client_id="+encodeURIComponent(config.client_id)
-        + "&scope="+encodeURIComponent(config.requested_scopes)
-        + "&redirect_uri="+encodeURIComponent(config.redirect_uri)
-        ;
-
-    // Redirect to the authorization server
-    window.location = url;
-});
-
 
 //////////////////////////////////////////////////////////////////////
 // OAUTH REDIRECT HANDLING
@@ -60,23 +22,20 @@ var q = parseQueryString(window.location.search.substring(1));
 // Check if the server returned an error string
 if(q.error) {
     alert("Error returned from authorization server: "+q.error);
-    document.getElementById("error_details").innerText = q.error+"\n\n"+q.error_description;
-    document.getElementById("error").classList = "";
+    document.getElementById("result").innerText = q.error+"\n\n"+q.error_description;
 }
 
 // If the server returned an authorization code, attempt to exchange it for an access token
 if(q.code) {
 
     // Exchange the authorization code for an access token
-    sendGetRequest(config.token_endpoint, q.code, function(request, body) {
+    sendGetRequest('${OWN_SERVICE_TOKEN_ENDPOINT}', q.code, function(request, body) {
 
         localStorage.setItem("access_token", body.access_token);
 
         // Initialize your application now that you have an access token.
         // Here we just display it in the browser.
-        document.getElementById("access_token").innerText = body.access_token;
-        document.getElementById("start").classList = "hidden";
-        document.getElementById("token").classList = "";
+        document.getElementById("result").innerText = body.access_token;
 
         // Replace the history entry to remove the auth code from the browser address bar
         window.history.replaceState({}, null, "/");
@@ -84,8 +43,7 @@ if(q.code) {
     }, function(request, error) {
         // This could be an error response from the OAuth server, or an error because the
         // request failed such as if the OAuth server doesn't allow CORS requests
-        document.getElementById("error_details").innerText = error.error+"\n\n"+error.error_description;
-        document.getElementById("error").classList = "";
+        document.getElementById("result").innerText = error.error+"\n\n"+error.error_description;
     });
 }
 
@@ -125,44 +83,5 @@ function parseQueryString(string) {
 }
 
 </script>
-
-<style>
-body {
-  padding: 0;
-  margin: 0;
-  min-height: 100vh;
-  font-family: arial, sans-serif;
-}
-@media(max-width: 400px) {
-  body {
-    padding: 10px;
-  }
-}
-.full-height {
-  min-height: 100vh;
-}
-.flex-center {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-}
-.content {
-  max-width: 400px;
-}
-h2 {
-  text-align: center;
-}
-.code {
-  font-family: "Courier New", "Courier", monospace;
-  width: 100%;
-  padding: 4px;
-  border: 1px #ccc solid;
-  border-radius: 4px;
-  word-break: break-all;
-}
-.hidden {
-  display: none;
-}
-</style>
 
 </html>

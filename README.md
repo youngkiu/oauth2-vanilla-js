@@ -12,3 +12,13 @@ This demonstration uses the following browser APIs which may not be available in
 * [window.crypto.getRandomValues](https://caniuse.com/#feat=getrandomvalues)
 * [window.crypto.subtle.digest](https://caniuse.com/#feat=cryptography)
 * [TextEncoder](https://caniuse.com/#feat=textencoder)
+
+---
+
+## Update the following variables in index.html
+
+- CLIENT_ID
+- REDIRECT_URI
+- AUTHORIZATION_ENDPOINT
+- OWN_SERVICE_TOKEN_ENDPOINT
+- SCOPES 
