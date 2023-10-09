@@ -15,10 +15,12 @@ This demonstration uses the following browser APIs which may not be available in
 
 ---
 
-## Update the following variables in index.html
+## Update the following variables
 
-- CLIENT_ID
-- REDIRECT_URI
-- AUTHORIZATION_ENDPOINT
-- OWN_SERVICE_TOKEN_ENDPOINT
-- SCOPES 
+- index.html
+  - CLIENT_ID
+  - REDIRECT_URI
+  - AUTHORIZATION_ENDPOINT
+  - SCOPES
+- script.js 
+  - SERVICE_TOKEN_ENDPOINT
